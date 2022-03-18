@@ -1,0 +1,17 @@
+[Unit]
+Description=Tool for managing secrets
+Documentation=https://vaultproject.io/docs/
+After=network.target
+ConditionFileNotEmpty={{ vault_bootstrap_directory }}/vault.hcl
+
+[Service]
+ExecStart={{ vault_bootstrap_directory }}/start.sh
+ExecReload=/bin/kill -HUP $MAINPID
+CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
+Capabilities=CAP_IPC_LOCK+ep
+SecureBits=keep-caps
+NoNewPrivileges=yes
+KillSignal=SIGINT
+
+[Install]
+WantedBy=default.target

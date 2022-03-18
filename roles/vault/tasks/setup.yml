@@ -1,0 +1,34 @@
+---
+- name: "Unzip vault archive"
+  unarchive:
+    src: "{{ vault_temporary_directory }}/vault_{{ vault_version }}_linux_amd64.zip"
+    dest: "{{ vault_binary_directory }}"
+    
+- name: Create Vault Directories
+  file:
+    path: "{{ vault_bootstrap_directory }}"
+    state: directory
+    mode: 0755
+
+- name: Create Vault Config File
+  template:
+    src: vault.hcl.j2
+    dest: "{{ vault_bootstrap_directory }}/vault.hcl"
+
+- name: Create start.sh
+  template:
+    src: start.sh.j2
+    dest: "{{ vault_bootstrap_directory }}/start.sh"
+    mode: 0777
+
+- name: Create Vault systemd config file
+  template:
+    src: vault.service.j2
+    dest: /etc/systemd/system/vault.service
+
+- name: Restart Vault service
+  systemd:
+    name: vault
+    state: restarted
+    daemon_reload: true
+    enabled: true

@@ -1,0 +1,7 @@
+---
+vault_binary_directory: /usr/local/bin
+vault_bootstrap_directory: /etc/vault.d
+vault_temporary_directory: /tmp
+vault_version: 1.7.0
+
+unseal_data_dir: "/tmp/unseal"

@@ -1,0 +1,12 @@
+---
+- name: Setup
+  include_tasks: setup.yml
+  tags: setup
+
+- name: Initialize
+  include_tasks: initialize.yml
+  tags: initialize
+
+- name: Unseal
+  include_tasks: unseal.yml
+  tags: unseal

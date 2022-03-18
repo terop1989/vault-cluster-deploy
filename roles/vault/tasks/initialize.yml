@@ -1,0 +1,34 @@
+---
+- name: Create unseal directories
+  file:
+    path: "{{ unseal_data_dir }}"
+    state: directory
+  delegate_to: localhost
+
+- name: Initialise Vault
+  block:
+
+    - name: Initialise Vault operator
+      shell: vault operator init -key-shares=5 -key-threshold=3 -format json
+      environment:
+        VAULT_ADDR: "http://127.0.0.1:8200"
+      register: vault_init_results
+
+    - name: Parse output of vault init
+      set_fact:
+        vault_init_parsed: "{{ vault_init_results.stdout | from_json }}"
+
+    - name: Create unseal script
+      template:
+        src: start.sh.j2
+        dest: "{{ unseal_data_dir }}/start.sh"
+      delegate_to: localhost
+
+    - name: Write root token to file
+      copy:
+        content: "{{ vault_init_parsed.root_token }}"
+        dest: "{{ unseal_data_dir }}/rootkey"
+      delegate_to: localhost
+
+  when:
+    - (vault_role is defined) and (vault_role == "init")

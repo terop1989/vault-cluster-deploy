@@ -1,0 +1,13 @@
+---
+- name: Copy unseal script to vault hosts
+  copy:
+    src: "{{ unseal_data_dir }}/start.sh"
+    dest: "{{ vault_bootstrap_directory }}/start.sh"
+    mode: 0777 
+
+- name: Restart Vault service
+  systemd:
+    name: vault
+    state: restarted
+    daemon_reload: true
+    enabled: true

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+{% if vault_init_parsed is defined %}
+sleep 10
+export VAULT_ADDR=http://127.0.0.1:8200
+{% for unseal_key in vault_init_parsed.unseal_keys_hex %}
+vault operator unseal {{ unseal_key }}
+{% endfor %}
+{% endif %}
+
+{{ vault_binary_directory }}/vault server -config={{ vault_bootstrap_directory }}/vault.hcl
